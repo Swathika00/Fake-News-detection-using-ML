@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Result - Fake News Detection{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body text-center p-5">
+                    <!-- Result Icon -->
+                    <div class="mb-4">
+                        {% if is_fake %}
+                        <i class="fas fa-exclamation-triangle fa-5x" style="color: var(--danger-color);"></i>
+                        {% else %}
+                        <i class="fas fa-check-circle fa-5x" style="color: var(--success-color);"></i>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Result Title -->
+                    <h2 class="mb-3">
+                        {% if is_fake %}
+                        <span class="text-danger">⚠️ FAKE NEWS DETECTED</span>
+                        {% else %}
+                        <span class="text-success">✅ REAL NEWS</span>
+                        {% endif %}
+                    </h2>
+                    
+                    <!-- Confidence -->
+                    <div class="display-4 mb-4">
+                        <strong>{{ confidence|round(1) }}%</strong>
+                        <p class="text-muted small">Confidence Score</p>
+                    </div>
+                    
+                    <!-- Text Preview -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <p class="mb-0"><strong>Analyzed Text:</strong></p>
+                            <p class="text-muted">{{ text }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> New Analysis
+                        </a>
+                        <a href="{{ url_for('history') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-history"></i> View History
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

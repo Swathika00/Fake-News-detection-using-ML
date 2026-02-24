@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Batch Results - Fake News Detection{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0"><i class="fas fa-list"></i> Batch Prediction Results</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        <h5><i class="fas fa-check-circle"></i> Analysis Complete!</h5>
+                        <p class="mb-0">Successfully analyzed <strong>{{ total }}</strong> news articles.</p>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Text Preview</th>
+                                    <th>Prediction</th>
+                                    <th>Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for result in results %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ result.text }}</td>
+                                    <td>
+                                        {% if 'Fake' in result.prediction %}
+                                        <span class="badge bg-danger">Fake News</span>
+                                        {% else %}
+                                        <span class="badge bg-success">Real News</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ result.confidence }}%</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center mt-4">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                            <i class="fas fa-home"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

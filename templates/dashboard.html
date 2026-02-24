@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Fake News Detection{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-primary text-white" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+                <div class="card-body">
+                    <h2><i class="fas fa-user-circle"></i> Welcome, {{ user.username }}!</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-chart-pie fa-2x mb-3" style="color: var(--primary-color);"></i>
+                    <h4>{{ predictions|length }}</h4>
+                    <p class="text-muted mb-0">Total Predictions</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-check-circle fa-2x mb-3" style="color: var(--success-color);"></i>
+                    <h4>{{ predictions|selectattr('prediction', 'equalto', 1)|list|length }}</h4>
+                    <p class="text-muted mb-0">Real News Detected</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-times-circle fa-2x mb-3" style="color: var(--danger-color);"></i>
+                    <h4>{{ predictions|selectattr('prediction', 'equalto', 0)|list|length }}</h4>
+                    <p class="text-muted mb-0">Fake News Detected</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Prediction Form -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0"><i class="fas fa-search"></i> Analyze News Article</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('predict') }}">
+                        <div class="mb-3">
+                            <label for="news_text" class="form-label">Enter News Text</label>
+                            <textarea class="form-control" id="news_text" name="news_text" 
+                                      rows="8" placeholder="Paste your news article text here..." 
+                                      required></textarea>
+                            <div class="form-text">Enter the news article text you want to analyze for authenticity.</div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-search"></i> Analyze News
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Links -->
+        <div class="col-lg-4">
+            <div class="card mb-3">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{{ url_for('batch_predict') }}" class="btn btn-outline-primary w-100 mb-2">
+                        <i class="fas fa-file-csv"></i> Batch Prediction
+                    </a>
+                    <a href="{{ url_for('history') }}" class="btn btn-outline-secondary w-100 mb-2">
+                        <i class="fas fa-history"></i> View History
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> How It Works</h5>
+                </div>
+                <div class="card-body">
+                    <ol class="ps-3">
+                        <li class="mb-2">Enter or paste news text</li>
+                        <li class="mb-2">Click "Analyze News"</li>
+                        <li class="mb-2">Get instant prediction</li>
+                        <li>View confidence score</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Predictions -->
+    {% if predictions %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0"><i class="fas fa-clock"></i> Recent Predictions</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Text Preview</th>
+                                    <th>Prediction</th>
+                                    <th>Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pred in predictions[:10] %}
+                                <tr>
+                                    <td>{{ pred.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>{{ pred.text[:50] }}...</td>
+                                    <td>
+                                        {% if pred.prediction == 0 %}
+                                        <span class="badge bg-danger">Fake News</span>
+                                        {% else %}
+                                        <span class="badge bg-success">Real News</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ "%.1f"|format(pred.confidence) }}%</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
