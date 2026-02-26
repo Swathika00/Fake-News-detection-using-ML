@@ -1,6 +1,6 @@
 # Fake News Detection System
 
-A production-ready Fake News Detection web application using Machine Learning and NLP.
+A production-ready Fake News Detection web application using Machine Learning and NLP framework.
 
 ## Features
 
